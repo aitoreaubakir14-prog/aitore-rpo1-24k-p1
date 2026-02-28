@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %} | QazNews</title>
+  <link rel="stylesheet" href="{% static './css/style.css' %}">
+</head>
+
+<body>
+<header class="header">
+
+  <!-- PRIMARY HEADER -->
+  <div class="primary-header">
+    <div class="container">
+
+      <!-- Desktop nav -->
+      <nav class="desktop-only primary-nav">
+        <a href="{% url 'home_page' %}">Главная</a>
+        <a href="#">О нас</a>
+        <a href="#">FAQ</a>
+        <a href="#">Контакты</a>
+      </nav>
+
+      <!-- Desktop socials -->
+      <nav class="desktop-only social-nav">
+        <a href="#"><img src="{% static './img/threads.svg' %}" alt="Threads"></a>
+        <a href="#"><img src="{% static './img/telegram.svg' %}" alt="Telegram"></a>
+        <a href="#"><img src="{% static './img/instagram.svg' %}" alt="Instagram"></a>
+      </nav>
+
+      <!-- Mobile burger (ONLY on mobile) -->
+      <button class="burger mobile-only" type="button" aria-label="Открыть меню" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div>
+
+    <!-- MOBILE DROPDOWN MENU (categories + search only) -->
+    <div class="mobile-drop" aria-hidden="true">
+      <div class="mobile-drop__inner">
+
+        <div class="mobile-drop__section">
+          <div class="mobile-drop__title">Разделы</div>
+          <nav class="mobile-drop__links">
+            <a href="{% url 'all_news_page' %}">Все новости</a>
+            {% for category in categories %}
+            <a href="{% url 'news_by_category' pk=category.pk %}">{{ category.name }}</a>
+            {% endfor %}
+          </nav>
+        </div>
+
+        <div class="mobile-drop__section">
+          <a class="mobile-drop__search" href="{% url 'search_page' %}">
+            <img src="{% static './img/search.svg' %}" alt="">
+            <span>Поиск новостей</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SECONDARY HEADER -->
+  <div class="secondary-header">
+    <div class="container-fluid secondary-grid">
+      <a href="{% url 'admin:index' %}" class="login-link">
+        <img src="{% static './img/user.svg' %}" alt="">
+        <span>Войти</span>
+      </a>
+
+      <a href="{% url 'home_page' %}" class="logo">
+        <img src="{% static './img/logo.svg' %}" alt="QazNews">
+      </a>
+
+      <a href="#" class="phone-link">
+        <img src="{% static './img/phone.svg' %}" alt="">
+        <span>+7 777 123 45 67</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- THIRD HEADER (desktop only, hidden on mobile) -->
+  <div class="third-header desktop-only">
+    <div class="container-fluid">
+      <nav>
+        <a href="{% url 'all_news_page' %}">Все новости</a>
+        {% for category in categories %}
+        <a href="{% url 'news_by_category' pk=category.pk %}">{{ category.name }}</a>
+        {% endfor %}
+      </nav>
+      <a href="{% url 'search_page' %}">
+        <img src="{% static './img/search.svg' %}" alt="">
+        <span>Поиск новостей</span>
+      </a>
+    </div>
+  </div>
+
+</header>
+
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <a href="{% url 'home_page' %}">
+      <img src="{% static './img/logo-white.svg' %}" alt="QazNews">
+    </a>
+    <p>&copy; TOO Qaznews 2026. Все права защищены.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const burger = document.querySelector('.burger');
+    const drop = document.querySelector('.mobile-drop');
+    if (!burger || !drop) return;
+
+    const open = () => {
+      document.body.classList.add('drop-open');
+      burger.setAttribute('aria-expanded', 'true');
+      drop.setAttribute('aria-hidden', 'false');
+    };
+    const close = () => {
+      document.body.classList.remove('drop-open');
+      burger.setAttribute('aria-expanded', 'false');
+      drop.setAttribute('aria-hidden', 'true');
+    };
+
+    burger.addEventListener('click', () => {
+      document.body.classList.contains('drop-open') ? close() : open();
+    });
+
+    // close when tap any link inside
+    drop.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+
+    // ESC closes
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') close();
+    });
+  })();
+</script>
+
+</body>
+</html>
